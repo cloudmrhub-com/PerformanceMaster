@@ -15,6 +15,7 @@ RUN git clone https://github.com/erosmontin/myPy.git
 #fixing neccessary packages
 RUN conda env create -f myPy/environment.yml
 
+RUN conda init bash
 #copy the code
 COPY . /celery_tasks
 
