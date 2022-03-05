@@ -1,6 +1,3 @@
-from os import umask
-
-from sklearn import metrics
 import Poirot
 import SimpleITK as sitk
 from myPy import im
@@ -9,20 +6,21 @@ sfromUX=True
 RMASKOUT='/data/PROJECTS/POIROT/python/testdata/T0/__recUISNR_MASK.nii.gz'
 fieldsSNRfilename='/data/PROJECTS/POIROT/python/testdata/T0/__fieldSNR.nii.gz'
 
-UXMASK='/data/PROJECTS/POIROT/python/testdata/T0/UISNR_MASK.nii.gz'
-UXSNR='/data/PROJECTS/POIROT/python/testdata/T0/UISNR.nii.gz'
-UXSIGMA='/data/PROJECTS/POIROT/python/testdata/T0/UISNR_SIGMA.nii.gz'
+UXMASK='/data/PROJECTS/POIROT/python/testdata/UISNR_MASK.nii.gz'
+UXSNR='/data/PROJECTS/POIROT/python/testdata/UISNR.nii.gz'
+UXSIGMA='/data/PROJECTS/POIROT/python/testdata/UISNR_SIGMA.nii.gz'
 
 
 
-metricMASK='/data/PROJECTS/POIROT/python/testdata/T0/EM_MASK.nii.gz'
+metricMASK='/data/PROJECTS/POIROT/python/testdata/EM_MASK.nii.gz'
 FAKESIGMA='/data/PROJECTS/POIROT/python/testdata/T0/EM_REGISTERED_SIGMA.nii.gz'
 SFieldfn=None
 
 HF='./testdata/EM_H.nii.gz'
 EF='./testdata/EM_E.nii.gz'
 
-OF='./testdata/T0/_resultsPerf.nii.gz'
+OF='./testdata/T0/resultsPerf.nii.gz'
+OFmha='./testdata/T0/resultsPerf.mha'
 
 #mask registration
 mMask=im.Imaginable()
@@ -71,4 +69,5 @@ p.setUX(UXSNR)
 p.setTransform(T)
 O=p.getOutput()
 O.writeImageAs(OF)
+O.writeImageAs(OFmha)
 

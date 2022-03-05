@@ -16,10 +16,17 @@ RUN git clone https://github.com/erosmontin/myPy.git
 RUN conda env create -f myPy/environment.yml
 
 RUN conda init bash
+
+#extend the environment
+RUN conda create --name poirot --clone me
+COPY requirements.txt /celery_tasks/
+RUN conda activate poirot
+RUN pip install -r requirements.txt --user
+RUN conda deactivate
 #copy the code
 COPY . /celery_tasks
 
 #sign!
 RUN mkdir /cloudmr/
 RUN echo "Performance Master, \ built the " `date` "from user " $USER  >/cloudmr/buildversion.txt
-ENTRYPOINT ["conda", "activate", "me"]
+ENTRYPOINT ["conda", "activate", "poirot"]

@@ -6,10 +6,10 @@ import SimpleITK as sitk
 import numpy as np
 
 
-   
+#TODO NOMY TXE to TXE   
 
 class Poirot():
-    """Poirot is an applciation that allow user to measure ultimate metrics like SNR and TTX against the ones obtained from simulations.
+    """Poirot is an application that allow user to measure ultimate metrics like SNR and TXE against the ones obtained from simulations.
     In order to calculate the performance metric user need to set the UX metric and the Fields. The reference system of the UX and the field need t be oriented in the same way
     this means that x,y,z are defined as the nema standard (z is the B0 direction).
     Of course there will be  trnsformation between the two spaces and can be set using the set transform
@@ -17,7 +17,6 @@ class Poirot():
     def __init__(self,pType=""):
         self.Log=mything.Log("Poirot")
         self.UX = im.Imaginable()
-        # self.UXTTX = im.Imaginable()
         self.UXMask = im.Imaginable()
         self.Metric = im.Imaginable()
         self.MetricMask = im.Imaginable()
@@ -70,8 +69,9 @@ class Poirot():
             UX.setImage(smUX)
             UX.transformAndreshapeOverImage(Metric,transform)
             amUX=UX.getImage()
-            perf=perf/amUX            
-            self.Performance.setImage(np.nan_to_num(perf, copy=False, nan=0.0, posinf=0.0, neginf=0.0))
+            perf=perf/amUX   
+            AA=sitk.GetArrayFromImage(perf)         
+            self.Performance.setImageArray(np.nan_to_num(AA, copy=False, nan=0.0, posinf=0.0, neginf=0.0))
             return True
         except:
             return False
@@ -156,12 +156,21 @@ class Poirot():
         return self.UX
 
 class Field():
-    #[x,y,z,V+JV,Coil]
+    """Class Field
+    """
     def __init__(self,F=None) -> None:
         self.F = im.Imaginable()
         if F is not None:
             self.setField(F)
     def setField(self,F):
+        """_summary_
+
+        Args:
+            F ('str',sitk.Image,im.Imaginable): the 5d image of a field [x,y,z,v,C]
+
+        Returns:
+            boolean: True or False
+        """        
         O=True
         if isinstance(F, str):
             self.F.setImage(sitk.ReadImage(F))
@@ -179,6 +188,7 @@ class Field():
         return self.F
     
     def reset(self):
+
         pass
 
 
@@ -341,7 +351,7 @@ class EField(Field):
 
 
 class EHFields():
-    """Fields class allows user to calcuate SNR and TTX, b1plus and minus
+    """Fields class allows user to calcuate SNR and TXE, b1plus and minus
     """    
     def __init__(self,E,H) -> None:
         """_summary_
@@ -389,22 +399,36 @@ class EHFields():
             # self.Log.append("Calculating Fields SNR","ok")
             return O
 
-# class PoirotSNR(Poirot):
-#         self.Metric =im.Imaginable()
-#         self.Sigma = im.Imaginable()
-#         self.E = im.Imaginable()
-#         self.H = im.Imaginable()
+class PoirotSNR(Poirot):
+    def __init__(self):
+        super(PoirotSNR, self).__init__("SNR")
 
-#         # self.constants={}
-#         self.B1plus = im.Imaginable()
-#         self.B1minus = im.Imaginable()
-#         self.EHSNR = im.Imaginable()
+class PoirotTXE(Poirot): # TODO ROI
+    def __init__(self):
+        super(PoirotTXE, self).__init__("TXE")
+        self.setPerformanceType("TXE")
+        self.roi=im.Imaginable()
+    
+    def setRegionOfInterest(self,F):
+        O=True
+        if isinstance(F, str):
+            self.roi.setInputFileName(F)
+        elif isinstance(F,sitk.Image):
+            self.roi.setImage(F)
+        elif isinstance(F,im.Imaginable):
+            self.roi=F
+        else:
+            O=False
+        return O
+
+    def getConductivity(self):
+        return self.Sigma
 
 #     def getInputDescription(self):
 #         O={
 #             #UX
 #         "self.UX":"3D scalar image of complex type, x,y,z where z is the direction of the B0",
-#         # "self.UXTTX":"3D scalar image of complex type, x,y,z, where z is the direction of the B0",
+#         # "self.UXTXE":"3D scalar image of complex type, x,y,z, where z is the direction of the B0",
 #         "self.UXMask":"3D scalar image of real type, x,y,z, where z is the direction of the B0",
 #             #fields
 #         "self.E":"3D Tensor image of complex type, x,y,z,V,channels, x,yz, where z is the direction of the B0",
