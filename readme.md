@@ -23,3 +23,7 @@
 ## Requirents
 - conda
 - 8GB RAM
+
+
+[Eros Montin, PhD](me.biodimensional.com)
+**Forty-six and two are just ahead of me**

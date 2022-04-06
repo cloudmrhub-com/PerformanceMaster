@@ -6,7 +6,7 @@ import SimpleITK as sitk
 import numpy as np
 
 
-#TODO NOMY TXE to TXE   
+
 
 class Poirot():
     """Poirot is an application that allow user to measure ultimate metrics like SNR and TXE against the ones obtained from simulations.
