@@ -52,7 +52,11 @@ class Poirot():
 
     def getPerformanceType(self,s=""):
         return s+ self.PerformanceType
-
+    def getTransformedUX(self):
+        transform=self.getTransform()
+        UX=self.getUX().getDuplicate()
+        UX.transformAndreshapeOverImage(self.getMetric(),transform)
+        return UX
     def __calculate__(self):
         self.Log.append("start calculate " + self.getPerformanceType(),"pre")
         try:
@@ -62,8 +66,12 @@ class Poirot():
             perf = 100*ABS.Execute(m)
             UX=self.getUX()
             #if eye then
-            mUX=UX.getImage() #metric in the space of the metric
-            smUX=ABS.Execute(mUX)
+            mUX=UX.getImage() #ux in the space of the metric
+            try:
+                smUX=ABS.Execute(mUX)
+            except:
+                smUX=mUX
+        
             transform=self.getTransform()
             
             UX.setImage(smUX)

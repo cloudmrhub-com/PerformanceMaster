@@ -1,3 +1,4 @@
 testdata/
 test/
 myPy/
+__pycache__/

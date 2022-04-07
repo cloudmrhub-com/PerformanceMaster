@@ -17,6 +17,34 @@
     conda activate poirot
     pip install -r requirements.txt --user
     ```
+## use case 1:
+
+inputs:
+1. type: SNR or TXE
+1. ultimate
+1. ultimate mask
+1. metric
+1. metric mask
+
+## usecase 2:
+1. type: SNR or TXE
+1. ultimate
+1. ultimate mask
+1. metric mask
+1. calculate SNR/TXE
+	1. Efield
+	1. Hfield
+	1. Conductivity
+
+## usecase 3:
+1. type: SNR or TXE
+1. ultimate
+1. ultimate mask
+1. metric mask
+1. calculate SNR/TXE
+	1. Efield
+	1. Hfield
+	1. Conductivity comes from ultimate
 
 
 
