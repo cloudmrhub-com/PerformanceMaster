@@ -272,6 +272,7 @@ class EField(Field):
         super(EField, self).__init__(F)
         self.NoiseCovarianceMatrix =None
         self.Sigma=im.Imaginable() #conductivity
+        self.Rho=im.Imaginable() #material density
         self.operator="n"
         self.solver="pwc"
     def reset(self): #override
@@ -288,6 +289,11 @@ class EField(Field):
             self.setNoiseCovarianceMatrix(self.__calculateNCM__(self.operator,self.solver))
             return self.NoiseCovarianceMatrix
     
+    def setMaterialDensity(self,F):
+        return self.Rho.takeThisImage(F)
+    def getMaterialDensity(self):
+        return self.Rho
+
     def setConductivity(self,F):
         O=True
         if isinstance(F, str):
@@ -305,6 +311,32 @@ class EField(Field):
     def getConductivity(self):
         return self.Sigma
 
+    def getSAR(self): #tx
+        E=self.getField()
+        R=self.getMaterialDensity()
+        S=self.getConductivity()
+
+        if ((S.isImageSet()) & (R.isImageSet()) & (E.isImageSet())):
+            s=S.getImageArray() #[Z,Y,X]
+            e=E.getImageArray() #[C,V,Z,Y,X]
+            X,Y,Z,V,C=E.getImageSize()
+            r=R.getImageArray() #[Z,Y,X]
+            SAR=im.createZerosImaginableSameSizeOfImaginable(S)
+            sar=SAR.getImageAsNumpyArray()#[Z,Y,X]
+
+            nES=np.zeros((V,Z,Y,X),dtype=np.complex128)
+            
+            for c in range(C):
+                for l in range(3):
+                    nES[l,:]=nES[l,:]+E[c,l,:]
+            
+            for l in range(3):
+                sar=sar+(s*(nES[l,:]*nES[l,:]))
+            
+            SAR.setImageArray(sar/(2*r))
+            return SAR
+        else:
+            return None
 
     def __calculateNCM__(self,operator="n",solver="pwc"):
         #first of all we need a field
